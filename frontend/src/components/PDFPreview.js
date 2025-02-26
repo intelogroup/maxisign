@@ -52,6 +52,7 @@ import {
   Image as ImageIcon
 } from '@mui/icons-material';
 import { saveDocument, getFromStorage, STORAGE_KEYS } from '../utils/localStorage';
+import { savePDFWithOverlays } from '../utils/pdfUtils';
 
 // Styled components for the PDF viewer
 const PreviewContainer = styled(Paper)(({ theme }) => ({
@@ -886,8 +887,43 @@ function PDFPreview({ file, initialZoom = 'page-fit', onImagePlaced }) {
   // Save handler
   const handleSave = useCallback(async () => {
     try {
-      // TODO: Implement save functionality
-      // This should save the PDF with all placed images
+      if (!pdfUrl || placedImages.length === 0) {
+        throw new Error('No PDF or images to save');
+      }
+
+      // Show loading state
+      setSnackbar({
+        open: true,
+        message: 'Processing document...',
+        severity: 'info'
+      });
+
+      // Convert URL to File object
+      const response = await fetch(pdfUrl);
+      const pdfBlob = await response.blob();
+      const pdfFile = new File([pdfBlob], 'document.pdf', { type: 'application/pdf' });
+
+      // Format placed images for the overlay function
+      const formattedOverlays = placedImages.map(image => ({
+        ...image,
+        page: currentPage - 1 // Adjust page index to 0-based
+      }));
+
+      // Use the client-side PDF overlay function with fallback
+      const resultBlob = await savePDFWithOverlays(pdfFile, formattedOverlays);
+      
+      // Create download link
+      const downloadUrl = URL.createObjectURL(resultBlob);
+      const downloadLink = document.createElement('a');
+      downloadLink.href = downloadUrl;
+      downloadLink.download = 'maxisign_document.pdf';
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      
+      // Clean up
+      URL.revokeObjectURL(downloadUrl);
+      
       setSnackbar({
         open: true,
         message: 'Document saved successfully',
@@ -897,11 +933,11 @@ function PDFPreview({ file, initialZoom = 'page-fit', onImagePlaced }) {
       console.error('Failed to save document:', error);
       setSnackbar({
         open: true,
-        message: 'Failed to save document',
+        message: `Failed to save document: ${error.message}`,
         severity: 'error'
       });
     }
-  }, []);
+  }, [pdfUrl, placedImages, currentPage]);
 
   return (
     <PreviewContainer elevation={2}>

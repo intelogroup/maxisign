@@ -132,7 +132,7 @@ const Coordinates = styled(Typography)(({ theme }) => ({
 }));
 
 const ToolbarContainer = styled('div')(({ theme }) => ({
-  display: 'none', // Hide the outer toolbar
+  display: 'flex', // Changed from 'none' to 'flex' to show the custom toolbar
   position: 'absolute',
   top: 0,
   left: 0,
@@ -733,6 +733,7 @@ function PDFPreview({ file, initialZoom = 'page-fit', onImagePlaced }) {
       document.head.appendChild(style);
 
       // Initialize viewer with config
+      /* Disable Adobe PDF Embed API to use native PDF rendering
       if (window.AdobeDC) {
         const adobeDCView = new window.AdobeDC.View({
           clientId: process.env.REACT_APP_ADOBE_CLIENT_ID,
@@ -772,6 +773,7 @@ function PDFPreview({ file, initialZoom = 'page-fit', onImagePlaced }) {
           setError('Failed to initialize PDF viewer');
         });
       }
+      */
 
       setIsLoading(false);
       setError(null);

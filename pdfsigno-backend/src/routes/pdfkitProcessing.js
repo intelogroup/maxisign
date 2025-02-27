@@ -10,6 +10,12 @@ const sharp = require('sharp');
 
 const router = express.Router();
 
+// Add font configuration
+const fontConfig = {
+  ZapfDingbats: require('pdfkit/js/data/ZapfDingbats.afm'),
+  FoxitDingbats: fs.readFileSync(path.join(__dirname, '../../fonts/FoxitDingbats.pfb'))
+};
+
 /**
  * Apply effects to the image placement
  * @param {PDFDocument} doc - PDFKit document
@@ -178,7 +184,8 @@ router.post('/finalize', async (req, res) => {
     const doc = new PDFDocument({
       autoFirstPage: false,
       size: [pageWidth, pageHeight],
-      margin: 0
+      margin: 0,
+      fontConfig
     });
 
     // Pipe to output file

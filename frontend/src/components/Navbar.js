@@ -195,7 +195,7 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                 color="inherit" 
                 startIcon={<Description />}
                 onClick={() => navigate('/documents')}
-                active={location.pathname === '/documents'}
+                active={location.pathname === '/documents' ? true : undefined}
               >
                 Documents
               </NavButton>
@@ -203,7 +203,7 @@ const Navbar = ({ darkMode, toggleDarkMode }) => {
                 color="inherit"
                 startIcon={<MenuBook />}
                 onClick={() => navigate('/tutorial')}
-                active={location.pathname === '/tutorial'}
+                active={location.pathname === '/tutorial' ? true : undefined}
               >
                 Tutorial
               </NavButton>

@@ -15,9 +15,9 @@ import {
   CardContent,
   Chip
 } from '@mui/material';
-import PDFPreview from './PDFPreview';
+import PDFViewer from './PDFViewer';
 import ImagePreview from './ImagePreview';
-import FileUploader from './FileUploader';
+import FileUploader from './FileUpload/FileUploader';
 
 const EditorContainer = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -237,11 +237,9 @@ function PDFEditor() {
               <Grid container spacing={3}>
                 <Grid item xs={12} lg={8}>
                   {pdfFile ? (
-                    <PDFPreview
-                      file={pdfFile}
+                    <PDFViewer
+                      initialPdfUrl={pdfFile ? URL.createObjectURL(pdfFile) : null}
                       onImagePlaced={handleImagePlaced}
-                      onPageChange={handlePageChange}
-                      onTotalPagesChange={handleTotalPagesChange}
                     />
                   ) : (
                     <Skeleton 
